@@ -1,1 +1,392 @@
 
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.multipart,positioning}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Prueba Práctica • Unidad IV Ingeniería de Requisitos • ISR-401}
+\fancyhead[R]{\small Gamarra Zárate Jamileth}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\atributotabla}[1]{%
+\begin{center}
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Atributo} & \textbf{Valor} \\
+\hline
+#1
+\hline
+\end{tabular}
+\end{center}
+}
+
+\title{}
+\date{}
+
+\begin{document}
+
+% ============================================================
+% CARÁTULA
+% ============================================================
+\begin{center}
+{\large \textbf{UNIVERSIDAD TÉCNICA ESTATAL DE QUEVEDO}}\\[2pt]
+Facultad de Ciencias de la Computación \textbullet\ Carrera de Ingeniería de Software\\[12pt]
+{\Large \textbf{PRUEBA PRÁCTICA --- UNIDAD IV}}\\[4pt]
+Validación, Gestión, Herramientas y Estándares de Requisitos\\[4pt]
+Asignatura: Ingeniería de Requisitos (ISR-401) \textbullet\ Docente: Ing. Gleiston Guerrero, Mg.
+\end{center}
+
+\vspace{0.5cm}
+\begin{center}
+\begin{tabular}{|p{3cm}|p{5cm}|p{2.5cm}|p{4cm}|}
+\hline
+\textbf{Estudiante} & Gamarra Zárate Jamileth & \textbf{Fecha} & 11 de agosto de 2026 \\
+\hline
+\textbf{Modalidad} & Individual, en clase & \textbf{Duración} & 120 minutos \\
+\hline
+\textbf{Caso} & Sistema de Gestión de Pedidos & \textbf{Ponderación} & 100 puntos (30 + 70) \\
+\hline
+\end{tabular}
+\end{center}
+
+
+% ============================================================
+% P1
+% ============================================================
+\section*{P1. Modelo de datos --- Diagrama de clases UML}
+
+\textit{Construya el diagrama de clases UML del dominio con al menos las clases Cliente, Pedido, LíneaPedido y Producto. Cada clase debe incluir sus atributos con tipo, al menos una operación pertinente y las multiplicidades en los extremos de cada asociación. Subraye o marque los identificadores.}
+
+\vspace{0.3cm}
+\noindent Diagrama de clases del dominio del Sistema de Gestión de Pedidos, con las clases Cliente, Pedido, LíneaPedido y Producto. Cada clase incluye sus atributos con tipo, al menos una operación pertinente y las multiplicidades en los extremos de cada asociación. Los identificadores están subrayados.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{diagrama_de_clases.png}
+\caption{Diagrama de clases UML --- Sistema de Gestión de Pedidos}
+\label{fig:diagrama-clases}
+\end{figure}
+
+% ============================================================
+% P2
+% ============================================================
+\section*{P2. Modelo funcional --- Diagrama de actividades UML}
+
+\textit{Modele el proceso ``Registrar pedido'' con un diagrama de actividades UML que incluya: nodo inicial, al menos una decisión (¿stock?), los dos caminos alternativos (confirmar / notificar faltante), su convergencia y el nodo final. Use carriles de responsabilidad si distingue actores.}
+
+\vspace{1cm}
+
+% ============================================================
+% P3
+% ============================================================
+\section*{P3. Modelo de comportamiento --- Máquina de estados UML}
+
+\textit{Elabore la máquina de estados UML del ciclo de vida de un Pedido (p. ej. Registrado, Confirmado, Enviado, Entregado, Cancelado). Etiquete cada transición con su evento, incluya al menos una condición de guarda y marque el estado final de aceptación. Se valora el uso de un superestado (statechart) para factorizar la transición anular.}
+
+\vspace{1cm}
+
+% ============================================================
+% P4
+% ============================================================
+\section*{P4. Consistencia entre las tres perspectivas}
+
+\textit{Elabore una tabla de verificación cruzada que relacione cada evento de P3 con la función/acción de P2 que lo realiza y con la entidad o atributo de P1 que modifica. Detecte al menos una inconsistencia entre los modelos, documente el defecto y corrija el modelo afectado.}
+
+\subsection*{Tabla de verificación cruzada}
+
+\begin{center}
+\small
+\begin{tabular}{|p{3.7cm}|p{4.5cm}|p{5.3cm}|}
+\hline
+\textbf{Evento (P3)} & \textbf{Función/Acción (P2)} & \textbf{Entidad/atributo que modifica (P1)} \\
+\hline
+confirmar() [stock disponible] & Confirmar pedido & Pedido (cambia de estado a Confirmado) \\
+\hline
+notificarFaltante() [sin stock] & Notificar faltante de stock & Producto.stock (se consulta, no se modifica) \\
+\hline
+despachar() &  & Pedido (cambia de estado a Enviado) \\
+\hline
+entregar() &  & Pedido (cambia de estado a Entregado) \\
+\hline
+anular() &  & Pedido (cambia de estado a Cancelado) \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Inconsistencia detectada}
+El evento \texttt{notificarFaltante()} aparece como transición en la máquina de estados (P3) y como actividad en el diagrama de actividades (P2), pero no existe como operación en ninguna clase del diagrama de clases (P1). Es decir, hay un ``evento sin operación asociada'' en el modelo de datos.
+
+\subsection*{Corrección aplicada}
+Se agrega la operación \texttt{notificarFaltante()} a la clase Producto, ya que es la clase que conoce el stock disponible y es coherente con su operación existente \texttt{verificarStock()}.
+
+\textit{Nota: despachar/entregar/anular no tienen actividad propia en P2 porque ese diagrama solo modela el proceso ``Registrar pedido'', tal como pide el enunciado. Esos eventos pertenecen a procesos posteriores fuera del alcance de P2.}
+
+\newpage
+
+% ============================================================
+% P5
+% ============================================================
+\section*{P5. Especificación de requisitos con esquema de atributos}
+
+\textit{Redacte 4 requisitos: 2 funcionales y 2 no funcionales. Cada requisito no funcional debe nombrar una característica de ISO/IEC 25010:2023, fijar una métrica y un umbral. Para cada requisito complete un esquema de atributos: identificador, prioridad, estado, fuente, estabilidad, versión y método de verificación.}
+
+\subsection*{RF-01 --- Registro de pedido con validación de stock}
+El sistema debe permitir registrar un pedido verificando la disponibilidad de stock de cada producto antes de confirmarlo.
+
+\atributotabla{
+Identificador & RF-01 \\
+\hline
+Prioridad & Alta \\
+\hline
+Estado & Propuesto \\
+\hline
+Fuente & Caso de estudio --- Sistema de Gestión de Pedidos \\
+\hline
+Estabilidad & Estable \\
+\hline
+Versión & 1.0 \\
+\hline
+Método de verificación & Prueba funcional (caso de prueba con stock suficiente e insuficiente) \\
+}
+
+\subsection*{RF-02 --- Gestión del ciclo de vida del pedido}
+El sistema debe permitir cambiar el estado de un pedido confirmado a despachado, entregado o anulado, respetando las transiciones válidas del ciclo de vida.
+
+\atributotabla{
+Identificador & RF-02 \\
+\hline
+Prioridad & Alta \\
+\hline
+Estado & Propuesto \\
+\hline
+Fuente & Caso de estudio --- Sistema de Gestión de Pedidos \\
+\hline
+Estabilidad & Estable \\
+\hline
+Versión & 1.0 \\
+\hline
+Método de verificación & Prueba funcional (transición de estados) \\
+}
+
+\subsection*{RNF-01 --- Eficiencia de desempeño}
+El sistema debe registrar un pedido en un tiempo menor a 3 segundos, medido desde el envío del formulario hasta la confirmación en pantalla.
+
+\begin{center}
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Atributo} & \textbf{Valor} \\
+\hline
+Identificador & RNF-01 \\
+\hline
+Característica ISO/IEC 25010:2023 & Eficiencia de desempeño \\
+\hline
+Métrica & Tiempo de respuesta del registro \\
+\hline
+Umbral & $<$ 3 segundos \\
+\hline
+Prioridad & Media \\
+\hline
+Estado & Propuesto \\
+\hline
+Fuente & Caso de estudio --- Sistema de Gestión de Pedidos \\
+\hline
+Estabilidad & Estable \\
+\hline
+Versión & 1.0 \\
+\hline
+Método de verificación & Prueba de rendimiento (medición de tiempo bajo carga normal) \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{RNF-02 --- Seguridad}
+El sistema debe proteger los datos personales del cliente (cédula/RUC, nombre, correo) cifrándolos en reposo y restringiendo su acceso solo a usuarios autorizados.
+
+\begin{center}
+\begin{tabular}{|p{4cm}|p{9cm}|}
+\hline
+\textbf{Atributo} & \textbf{Valor} \\
+\hline
+Identificador & RNF-02 \\
+\hline
+Característica ISO/IEC 25010:2023 & Seguridad (confidencialidad) \\
+\hline
+Métrica & \% de campos sensibles cifrados \\
+\hline
+Umbral & 100\% de los campos sensibles cifrados en reposo \\
+\hline
+Prioridad & Alta \\
+\hline
+Estado & Propuesto \\
+\hline
+Fuente & Caso de estudio --- Sistema de Gestión de Pedidos \\
+\hline
+Estabilidad & Estable \\
+\hline
+Versión & 1.0 \\
+\hline
+Método de verificación & Prueba de seguridad (auditoría de cifrado y control de acceso) \\
+\hline
+\end{tabular}
+\end{center}
+
+
+% ============================================================
+% P6
+% ============================================================
+\section*{P6. Priorización MoSCoW}
+
+\textit{Clasifique los 4 requisitos de P5 en las categorías MoSCoW y justifique brevemente cada asignación en función del valor y la viabilidad.}
+
+\begin{center}
+\small
+\begin{tabular}{|p{1.7cm}|p{2.3cm}|p{9.5cm}|}
+\hline
+\textbf{Requisito} & \textbf{Categoría} & \textbf{Justificación} \\
+\hline
+RF-01 & Must have & Sin validación de stock no se puede registrar un pedido correctamente; es el núcleo del sistema. \\
+\hline
+RF-02 & Should have & Es importante para el flujo completo del negocio, pero el sistema podría operar en una primera versión solo con el registro. \\
+\hline
+RNF-01 & Could have & Mejora la experiencia, pero no bloquea el uso del sistema si el tiempo es ligeramente mayor. \\
+\hline
+RNF-02 & Must have & Es un requisito legal/ético: proteger datos personales es obligatorio, no negociable. \\
+\hline
+\end{tabular}
+\end{center}
+
+% ============================================================
+% P7
+% ============================================================
+\section*{P7. Validación por inspección}
+
+\textit{Aplique a los requisitos de P5 una lista de comprobación (no ambiguo, completo, singular, verificable, factible). Registre los defectos detectados sin corregirlos en el momento y, en un segundo paso, presente el retrabajo con los requisitos corregidos.}
+
+\subsection*{Paso 1 --- Identificación de defectos}
+
+\begin{center}
+\small
+\begin{tabular}{|p{1.4cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|p{1.5cm}|p{1.2cm}|p{4.5cm}|}
+\hline
+\textbf{Requisito} & \textbf{No ambiguo} & \textbf{Completo} & \textbf{Singular} & \textbf{Verificable} & \textbf{Factible} & \textbf{Defecto detectado} \\
+\hline
+RF-01 & Sí & Sí & Sí & Sí & Sí & Ninguno \\
+\hline
+RF-02 & No & Sí & No & Sí & Sí & No es singular: mezcla tres transiciones distintas en un solo requisito \\
+\hline
+RNF-01 & Sí & Sí & Sí & Sí & Sí & Ninguno \\
+\hline
+RNF-02 & Sí & No & Sí & Sí & Sí & Incompleto: no especifica el método de cifrado ni quién es ``usuario autorizado'' \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Paso 2 --- Retrabajo}
+
+\begin{itemize}[leftmargin=1.2cm]
+\item[\textbf{RF-02a:}] El sistema debe permitir despachar un pedido que se encuentre en estado Confirmado.
+\item[\textbf{RF-02b:}] El sistema debe permitir marcar como entregado un pedido que se encuentre en estado Enviado.
+\item[\textbf{RF-02c:}] El sistema debe permitir anular un pedido que no se encuentre en estado Entregado.
+\item[\textbf{RNF-02:}] El sistema debe cifrar los datos personales del cliente (cédula/RUC, nombre, correo) mediante AES-256 en reposo, permitiendo el acceso únicamente a usuarios con rol ``Administrador'' o ``Servicio al cliente''.
+\end{itemize}
+
+% ============================================================
+% P8
+% ============================================================
+\section*{P8. Pruebas de aceptación trazadas}
+
+\textit{Defina una prueba de aceptación por requisito (4 en total), indicando su tipo, sus entradas, el criterio de éxito y el requisito al que traza.}
+
+\begin{center}
+\small
+\begin{tabular}{|p{1.3cm}|p{2.3cm}|p{4cm}|p{3.7cm}|p{1.5cm}|}
+\hline
+\textbf{ID} & \textbf{Tipo} & \textbf{Entradas} & \textbf{Criterio de éxito} & \textbf{Traza a} \\
+\hline
+PA-01 & Funcional & Pedido con producto de stock = 5, cantidad solicitada = 2 & El pedido queda en estado Confirmado & RF-01 \\
+\hline
+PA-02 & Funcional & Pedido confirmado, se ejecuta acción ``despachar'' & El pedido cambia a estado Enviado & RF-02a \\
+\hline
+PA-03 & No funcional (rendimiento) & 50 registros de pedido simultáneos & Tiempo de respuesta promedio $<$ 3 s & RNF-01 \\
+\hline
+PA-04 & No funcional (seguridad) & Consulta de datos de cliente por usuario sin rol autorizado & Acceso denegado y dato no visible en texto plano & RNF-02 \\
+\hline
+\end{tabular}
+\end{center}
+
+% ============================================================
+% P9
+% ============================================================
+\section*{P9. Matriz de trazabilidad}
+
+\textit{Construya la matriz de trazabilidad que cruce los requisitos con: su fuente y sus modelos y pruebas de aceptación. Marque también al menos una dependencia horizontal entre requisitos e identifique cualquier requisito huérfano.}
+
+\begin{center}
+\small
+\begin{tabular}{|p{1.4cm}|p{3cm}|p{3.7cm}|p{1.7cm}|p{2.3cm}|}
+\hline
+\textbf{Requisito} & \textbf{Fuente (traza atrás)} & \textbf{Modelo asociado} & \textbf{Prueba asociada} & \textbf{Dependencia horizontal} \\
+\hline
+RF-01 & Caso de estudio, párrafo de validación de stock & P1 (Pedido, Producto), P2 (decisión stock), P3 (confirmar/notificarFaltante) & PA-01 & --- \\
+\hline
+RF-02a & Caso de estudio, ciclo de vida del pedido & P1 (Pedido.despachar), P3 (Confirmado$\to$Enviado) & PA-02 & Depende de RF-01 \\
+\hline
+RNF-01 & Caso de estudio, ``registrar los pedidos con rapidez'' & --- (no tiene modelo estructural propio) & PA-03 & Depende de RF-01 \\
+\hline
+RNF-02 & Caso de estudio, ``proteger los datos personales'' & P1 (clase Cliente) & PA-04 & --- \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Requisito huérfano detectado}
+RF-02b y RF-02c (entregar y anular) no tienen prueba de aceptación propia en P8, ya que solo se cubrió el despacho (PA-02). Quedan como huérfanos parciales: tienen modelo (P3) pero no prueba. Se recomienda agregar PA-05 y PA-06 antes de cerrar la línea base.
+
+\newpage
+
+% ============================================================
+% P10
+% ============================================================
+\section*{P10. Gestión del cambio y línea base}
+
+\textit{Simule una solicitud de cambio sobre un requisito: regístrela, analice su impacto usando la matriz de P9, indique la decisión del CCB y actualice la versión del requisito. Finalmente, declare una línea base.}
+
+\subsection*{Solicitud de cambio (CR-01)}
+\textbf{Descripción:} El cliente solicita que RNF-01 cambie el umbral de ``$<$ 3 segundos'' a ``$<$ 1.5 segundos'', por exigencia de una campaña comercial de alto tráfico.
+
+\noindent \textbf{Requisito afectado:} RNF-01.
+
+\subsection*{Análisis de impacto (usando la matriz P9)}
+Al no tener modelo estructural propio, el impacto recae directo sobre PA-03 (debe actualizarse el criterio de éxito) y de forma indirecta sobre RF-01, del cual depende (si el registro debe ser más rápido, puede requerir revisar la lógica de verificación de stock en P2).
+
+\subsection*{Decisión del CCB}
+Aprobada, con reserva técnica --- se solicita al equipo de desarrollo validar factibilidad de infraestructura antes de comprometer el umbral en producción.
+
+\subsection*{Actualización de versión}
+RNF-01 pasa de versión 1.0 a versión 1.1.
+
+\subsection*{Línea base declarada (Baseline v1.1)}
+\begin{itemize}
+\item ERS v1.1
+\item Diagrama de clases P1 v1.0
+\item Diagrama de actividades P2 v1.0
+\item Máquina de estados P3 v1.0
+\item Matriz de trazabilidad P9 v1.1
+\item Pruebas de aceptación P8 v1.0
+\end{itemize}
+
+\end{document}
